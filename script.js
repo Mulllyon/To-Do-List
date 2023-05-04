@@ -75,13 +75,18 @@ function changeTaskStatus(id) {
 
 function changeTask(id) {
     let changedName = prompt('Введите новое название задачи!')
-    if (changedName != '' && isTaskExist(changedName) === false) {
-        tasksList.forEach((task) = function (task) {
-            if (task.id == id) {
-                task.text = changedName
-                tasksRender(tasksList)
-            }
-        })
+    if (changedName === '') {
+        alert('Вы ничего не ввели!')
+    }
+    else {
+        if (isTaskExist(changedName) === false) {
+            tasksList.forEach((task) = function (task) {
+                if (task.id == id) {
+                    task.text = changedName
+                    tasksRender(tasksList)
+                }
+            })
+        }
     }
 }
 
