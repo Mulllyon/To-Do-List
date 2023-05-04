@@ -1,14 +1,18 @@
+var tasksList = []
+
 const elements = {
     new: document.getElementById('new'),
     add: document.getElementById('add'),
-    tasks: document.getElementById('tasks'),
+    tasks: document.getElementById('tasks')
 }
 
-var tasksList = []
+loadTasks()
 
-if (localStorage.getItem('savedTasks') != null) {
-    tasksList = JSON.parse(localStorage.getItem('savedTasks'))
-    taskRender(tasksList)
+function loadTasks() {
+    if (localStorage.getItem('savedTasks') != null) {
+        tasksList = JSON.parse(localStorage.getItem('savedTasks'))
+        tasksRender(tasksList)
+    }
 }
 
 elements.add.onclick = function () {
@@ -18,15 +22,36 @@ elements.add.onclick = function () {
     }
 }
 
+elements.new.onkeydown = function (e) {
+    if (e.key === 'Enter') {
+        if (elements.new.value != '' && isTaskExist(elements.new.value) === false) {
+            addTask(elements.new.value)
+            elements.new.value = ''
+        }
+    }
+}
+
+elements.tasks.onclick = function (e) {
+    if (e.target.classList.contains('todo__task-checkbox')) {
+        changeTaskStatus(e.target.parentElement.getAttribute('id'))
+    }
+    else if (e.target.classList.contains('todo__task-change')) {
+        changeTask(e.target.parentElement.getAttribute('id'))
+    }
+    else if (e.target.classList.contains('todo__task-delete')) {
+        deleteTask(e.target.parentElement.getAttribute('id'))
+    }
+}
+
 function isTaskExist(text) {
     let isExist = false
     tasksList.forEach((task) = function (task) {
         if (task.text === text) {
-            alert('Задача уже существует!')
-            isExist = true;
+            alert ('Задача уже существует!')
+            isExist = true
         }
     })
-    return isExist;
+    return isExist
 }
 
 function addTask(text) {
@@ -36,73 +61,67 @@ function addTask(text) {
         isComplete: false
     }
     tasksList.unshift(task)
-    taskRender(tasksList)
+    tasksRender(tasksList)
 }
 
-elements.tasks.onclick = function (event) {
-    if (event.target.classList.contains('todo__task-checkbox')) {
-        changeTaskStatus(event.target.parentElement.getAttribute('id'))
-    }
-    else if (event.target.classList.contains('todo__task-delete')) {
-        deleteTask(event.target.parentElement.getAttribute('id'))
-    }
-    else  if(event.target.classList.contains('todo__task-change')) {
-        changeTask(event.target.parentElement.getAttribute('id'))
-    }
-}
-
-function changeTaskStatus(taskId) {
+function changeTaskStatus(id) {
     tasksList.forEach((task) = function (task) {
-        if (task.id == taskId) {
+        if (task.id == id) {
             task.isComplete = !task.isComplete
-            taskRender(tasksList)
+            tasksRender(tasksList)
         }
     })
 }
 
-function deleteTask(taskId) {
-    tasksList.forEach((task) = function (task) {
-        if (task.id == taskId) {
-            tasksList.splice(tasksList.indexOf(task), 1)
-            taskRender(tasksList)
-        }
-    })
-}
-
-function changeTask(taskId) {
-    tasksList.forEach((task) = function (task) {
-        if (task.id == taskId) {
-            var changedName = prompt('Введите новое название задачи!')
-            if (changedName != '' && isTaskExist(changedName) === false) {
-                task.text = changedName;
+function changeTask(id) {
+    let changedName = prompt('Введите новое название задачи!')
+    if (changedName != '' && isTaskExist(changedName) === false) {
+        tasksList.forEach((task) = function (task) {
+            if (task.id == id) {
+                task.text = changedName
+                tasksRender(tasksList)
             }
-            taskRender(tasksList)
+        })
+    }
+}
+
+function deleteTask(id) {
+    tasksList.forEach((task) = function (task) {
+        if (task.id == id) {
+            tasksList.splice(tasksList.indexOf(task), 1)
+            tasksRender(tasksList)
         }
     })
 }
 
-function taskRender(tasksList) {
-    let tasksHtml=''
+function changeTaskStatus(id) {
     tasksList.forEach((task) = function (task) {
-        let isTaskComplete
-        let isChecked
+        if (task.id == id) {
+            task.isComplete = !task.isComplete
+            tasksRender(tasksList)
+        }
+    })
+}
+
+function tasksRender(list) {
+    let tasksHTML = ''
+    let isTaskComplete
+    list.forEach((task) = function (task) {
         if (task.isComplete === true) {
-            isTaskComplete = 'todo__task todo__task-complete'
-            isChecked = 'checked'
+            isTaskComplete = 'checked'
         }
         else {
-            isTaskComplete = 'todo__task'
-            isChecked = ''
+            isTaskComplete = ''
         }
-        const taskHtml = `
-        <div id="${task.id}" class="${isTaskComplete}">
-            <input class="todo__task-checkbox" type="checkbox" ${isChecked}>
+        const taskHTML = `
+        <div id="${task.id}" class="todo__task ${isTaskComplete}">
+            <input class="todo__task-checkbox" type="checkbox" ${isTaskComplete}/>
             <div class="todo__task-text">${task.text}</div>
             <button class="todo__task-change">✎</button>
             <button class="todo__task-delete">✗</button>
         </div>`
-        tasksHtml = tasksHtml + taskHtml
+        tasksHTML = tasksHTML + taskHTML
     })
-    elements.tasks.innerHTML = tasksHtml
-    localStorage.setItem('savedTasks', JSON.stringify(tasksList));
+    elements.tasks.innerHTML = tasksHTML
+    localStorage.setItem('savedTasks', JSON.stringify(tasksList))
 }
