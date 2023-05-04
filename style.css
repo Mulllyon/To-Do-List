@@ -70,7 +70,7 @@ body {
     min-height: var(--size);
 }
 
-.todo__task-complete .todo__task-text {
+.checked .todo__task-text {
     text-decoration: line-through;
     color: var(--default);
 }
@@ -91,6 +91,7 @@ body {
 
 .todo__task-text {
     font-size: 22px;
+    overflow-x: auto;
 }
 
 .todo__task-delete {
