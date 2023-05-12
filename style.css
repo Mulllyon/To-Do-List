@@ -94,14 +94,14 @@ body {
     overflow-x: auto;
 }
 
-.todo__task-delete {
-    display: none;
-    font-size: 18px;
-    margin-left: 0;
-}
-
 .todo__task-change {
     margin-left: auto;
     display: none;
     font-size: 18px;
+}
+
+.todo__task-delete {
+    display: none;
+    font-size: 18px;
+    margin-left: 0;
 }
